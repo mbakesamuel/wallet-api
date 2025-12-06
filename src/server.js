@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import rateLimiter from "./middleware/rateLimiter.js";
 import transactionsRoute from "./routes/transactionsRoute.js";
 import { initDB } from "./config/db.js";
+import job from "./config/cron.js";
 
 //load environment variables from .env file
 dotenv.config();
@@ -10,9 +11,18 @@ dotenv.config();
 //creat an express app
 const app = express();
 
+if(process.env.NODE_ENV === "production") {
+  //start the cron job only in production environment
+  job.start();
+}
+
 //middleware to parse JSON bodies
 app.use(rateLimiter);
 app.use(express.json());
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "OK", message: "API is healthy" });
+});
 
 //we use the transactionsRoute for all routes starting with /api/transactions
 app.use("/api/transactions", transactionsRoute);
