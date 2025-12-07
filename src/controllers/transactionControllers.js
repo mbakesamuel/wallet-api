@@ -36,7 +36,7 @@ export const deleteTransaction = async (req, res) => {
 
     const result = await sql`DELETE FROM transactions WHERE id = ${id}`;
 
-    if (result.length === 0) {
+    if (result.count === 0) {
       return res.status(404).json({ message: "Transaction not found" });
     }
 
