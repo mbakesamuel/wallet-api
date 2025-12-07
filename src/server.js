@@ -4,6 +4,7 @@ import rateLimiter from "./middleware/rateLimiter.js";
 import transactionsRoute from "./routes/transactionsRoute.js";
 import { initDB } from "./config/db.js";
 import job from "./config/cron.js";
+import cors from "cors";
 
 //load environment variables from .env file
 dotenv.config();
@@ -11,7 +12,9 @@ dotenv.config();
 //creat an express app
 const app = express();
 
-if(process.env.NODE_ENV === "production") {
+app.use(cors());
+
+if (process.env.NODE_ENV === "production") {
   //start the cron job only in production environment
   job.start();
 }
@@ -26,7 +29,6 @@ app.get("/api/health", (req, res) => {
 
 //we use the transactionsRoute for all routes starting with /api/transactions
 app.use("/api/transactions", transactionsRoute);
-
 
 //so when database is initialized then only start the server
 initDB().then(() => {
