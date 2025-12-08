@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import rateLimiter from "./middleware/rateLimiter.js";
 import transactionsRoute from "./routes/transactionsRoute.js";
 import { initDB } from "./config/db.js";
-import job from "./config/cron.js";
 import cors from "cors";
 
 //load environment variables from .env file
@@ -13,11 +12,6 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
-
-if (process.env.NODE_ENV === "production") {
-  //start the cron job only in production environment
-  job.start();
-}
 
 //middleware to parse JSON bodies
 app.use(rateLimiter);
